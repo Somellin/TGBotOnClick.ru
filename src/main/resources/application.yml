@@ -1,0 +1,21 @@
+## db settings
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tg_bot
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+## bot settings
+bot:
+  token: ${LOCAL_BOT_TOKEN}
+
+click:
+  currency:
+    url: https://api.click.ru/V0/
+
