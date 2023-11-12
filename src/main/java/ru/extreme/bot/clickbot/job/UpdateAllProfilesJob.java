@@ -2,6 +2,7 @@ package ru.extreme.bot.clickbot.job;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.extreme.bot.clickbot.action.actionenum.ActionCode;
 import ru.extreme.bot.clickbot.exception.ServiceException;
@@ -29,14 +30,13 @@ public class UpdateAllProfilesJob {
     private final ProfileAccountService profileAccountService;
     private final ChatUserService chatUserService;
 
-    public List<SendMessage> updatedProfilesWithBalanceLess5000() throws ServiceException, InterruptedException {
+    public List<BotApiMethod> updatedProfilesWithBalanceLess5000() throws ServiceException, InterruptedException {
         clickProfileService.updateAllProfilesData();
 
         List<Long> adminsChatId = chatUserService.getChatIdsAllAdmins();
 
         List<Long> profilesID = profileAccountService.getProfilesIDWhereAccBalanceLess5000();
         Map<ClickProfile, List<ProfileAccount>> profileAccountsMap = clickProfileService.getProfileAccountsMapById(profilesID);
-
 
         return MessageUtils.createMessageClickProfilesInfo(adminsChatId, ACTION_TEXT, MarkupCreator.createMarkupActions(ACTION_LIST),
                 profileAccountsMap);

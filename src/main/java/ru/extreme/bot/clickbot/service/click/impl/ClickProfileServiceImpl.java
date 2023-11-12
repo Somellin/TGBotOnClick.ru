@@ -81,7 +81,7 @@ public class ClickProfileServiceImpl implements ClickProfileService {
             String jsonProfile = client.getJsonProfileInstance(EndPoint.USER.getName(), profileToken);
             ClickProfile updateProfile = JsonConverter.convertProfileJson(jsonProfile);
 
-            Thread.sleep(2000);
+            Thread.sleep(2500);
             saveUpdateProfileInfo(updateProfile, profileToken);
         }
 

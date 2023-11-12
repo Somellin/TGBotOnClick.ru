@@ -6,6 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.extreme.bot.clickbot.action.SingleAction;
 import ru.extreme.bot.clickbot.utils.MessageInfo;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import static ru.extreme.bot.clickbot.action.actionenum.SingleActionCode.HELP_ACTION;
 import static ru.extreme.bot.clickbot.utils.MessageUtils.createSendMessage;
 
@@ -30,8 +34,8 @@ public class HelpAction implements SingleAction {
     }
 
     @Override
-    public BotApiMethod handle(Update update) {
+    public List<BotApiMethod> handle(Update update) {
         MessageInfo info = new MessageInfo(update);
-        return createSendMessage(info.getChatId(), HELP_TEXT);
+        return Collections.singletonList(createSendMessage(info.getChatId(), HELP_TEXT));
     }
 }

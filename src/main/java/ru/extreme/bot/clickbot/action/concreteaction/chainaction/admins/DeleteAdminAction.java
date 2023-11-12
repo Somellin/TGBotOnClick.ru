@@ -51,7 +51,7 @@ public class DeleteAdminAction implements ChainAction {
     }
 
     @Override
-    public BotApiMethod callback(Update update) throws Exception {
+    public List<BotApiMethod> callback(Update update) throws Exception {
         try {
             MessageInfo info = new MessageInfo(update);
 
@@ -63,10 +63,10 @@ public class DeleteAdminAction implements ChainAction {
 
             String adminName = chatUserService.deleteAdminById(adminId);
 
-            return createEditMessageMarkup(info.getChatId(),
+            return Collections.singletonList(createEditMessageMarkup(info.getChatId(),
                     adminName + " удален.",
                     info.getMessageId(),
-                    MarkupCreator.createMarkupActions(ACTION_LIST));
+                    MarkupCreator.createMarkupActions(ACTION_LIST)));
 
         } catch (Exception e) {
             throw new ServiceException(DELETE_ADMIN_EXCEPTION.getCode(), e);

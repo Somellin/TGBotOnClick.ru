@@ -29,7 +29,7 @@ import static ru.extreme.bot.clickbot.utils.MessageUtils.createSendMessageMarkup
 @RequiredArgsConstructor
 public class MenuAction implements SingleAction {
     private static final List<ActionCode> ADMIN_ACTION_LIST = List
-            .of(UPDATE_DATA_ACTION, SHOW_PROFILE_ACTION, SETTINGS_ACTION);
+            .of(UPDATE_DATA_ACTION, SHOW_PROFILE_ACTION, SHOW_ALL_DATA_ACTION, SETTINGS_ACTION);
 
     private static final List<ActionCode> NONE_ADMIN_ACTION_LIST = Collections.singletonList(SETTINGS_ACTION);
 
@@ -41,11 +41,11 @@ public class MenuAction implements SingleAction {
     }
 
     @Override
-    public BotApiMethod handle(Update update) {
+    public List<BotApiMethod> handle(Update update) {
         MessageInfo info = new MessageInfo(update);
         Role currentUserRole = chatUserService.chatUserIsRegisteredAndGetRoel(info.getChatId());
 
-        return messageMenu(currentUserRole, info);
+        return Collections.singletonList(messageMenu(currentUserRole, info));
     }
 
     private BotApiMethod messageMenu(Role currentUserRole, MessageInfo info) {

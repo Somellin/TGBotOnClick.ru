@@ -57,7 +57,7 @@ public class ShowProfileAction implements ChainAction {
     }
 
     @Override
-    public BotApiMethod callback(Update update) throws ServiceException {
+    public List<BotApiMethod> callback(Update update) throws ServiceException {
         try {
             MessageInfo info = new MessageInfo(update);
 
@@ -74,7 +74,7 @@ public class ShowProfileAction implements ChainAction {
             profileAccountsMap.put(profile, accounts);
 
             return createMessageMarkupClickProfilesInfo(info.getChatId(),
-                    "Информация по профилю:", info.getMessageId(),
+                    "Информация по профилю:",
                     profileAccountsMap, MarkupCreator.createMarkupActions(ACTION_LIST));
         } catch (Exception e) {
             throw new ServiceException(SHOW_PROFILE_EXCEPTION.getCode(), e);

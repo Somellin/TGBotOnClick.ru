@@ -12,6 +12,7 @@ public enum SingleActionCode implements ActionCode {
     SHOW_MY_DATA_ACTION("SHOW_MY_DATA_ACTION","Показать мои данные"),
     CANCEL_ACTION("CANCEL_ACTION", "Отмена"),
     UPDATE_DATA_ACTION("UPDATE_DATA_ACTION", "Обновить данные базы"),
+    SHOW_ALL_DATA_ACTION("SHOW_ALL_DATA_ACTION", "Показать все данные профилей"),
     UNKNOWN("UNKNOWN", "Неизвестная команда");
 
     private final String code;

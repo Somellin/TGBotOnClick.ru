@@ -11,6 +11,9 @@ import ru.extreme.bot.clickbot.service.bot.ChatUserService;
 import ru.extreme.bot.clickbot.utils.MessageInfo;
 import ru.extreme.bot.clickbot.utils.extra.Variables;
 
+import java.util.Collections;
+import java.util.List;
+
 import static ru.extreme.bot.clickbot.action.actionenum.SingleActionCode.START_ACTION;
 import static ru.extreme.bot.clickbot.utils.MessageUtils.createSendMessage;
 
@@ -28,7 +31,7 @@ public class StartAction implements SingleAction {
     }
 
     @Override
-    public BotApiMethod handle(Update update) {
+    public List<BotApiMethod> handle(Update update) {
         MessageInfo info = new MessageInfo(update);
 
         Role currentUserRole = chatUserService.chatUserIsRegisteredAndGetRoel(info.getChatId());
@@ -45,6 +48,6 @@ public class StartAction implements SingleAction {
                     String.format(Variables.START_TEXT.getMsg(), userFirstName));;
         }
 
-        return sendMessage;
+        return Collections.singletonList(sendMessage);
     }
 }

@@ -12,6 +12,7 @@ import ru.extreme.bot.clickbot.markup.MarkupCreator;
 import ru.extreme.bot.clickbot.service.bot.ChatUserService;
 import ru.extreme.bot.clickbot.utils.MessageInfo;
 
+import java.util.Collections;
 import java.util.List;
 
 import static ru.extreme.bot.clickbot.action.actionenum.SingleActionCode.MENU_ACTION;
@@ -36,7 +37,7 @@ public class MyDataAction implements SingleAction {
     private final ChatUserService chatUserService;
 
     @Override
-    public BotApiMethod handle(Update update) {
+    public List<BotApiMethod> handle(Update update) {
         MessageInfo info = new MessageInfo(update);
         Role currentUserRole = chatUserService.chatUserIsRegisteredAndGetRoel(info.getChatId());
 
@@ -55,6 +56,6 @@ public class MyDataAction implements SingleAction {
                     MarkupCreator.createMarkupActions(ACTION_LIST));
         }
 
-        return messageEdit;
+        return Collections.singletonList(messageEdit);
     }
 }

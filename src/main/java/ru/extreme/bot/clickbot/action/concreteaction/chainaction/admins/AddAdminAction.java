@@ -49,7 +49,7 @@ public class AddAdminAction implements ChainAction {
     }
 
     @Override
-    public BotApiMethod callback(Update update) throws ServiceException {
+    public List<BotApiMethod> callback(Update update) throws ServiceException {
         try {
             MessageInfo info = new MessageInfo(update);
 
@@ -61,9 +61,9 @@ public class AddAdminAction implements ChainAction {
 
             String userAccept = chatUserService.setUserAdminRightsById(userId);
 
-            return createSendMessageMarkup(info.getChatId(),
+            return Collections.singletonList(createSendMessageMarkup(info.getChatId(),
                     "Пользователь " + userAccept + " получил права администратора.",
-                    MarkupCreator.createMarkupActions(ACTION_LIST));
+                    MarkupCreator.createMarkupActions(ACTION_LIST)));
         } catch (Exception e) {
             throw new ServiceException(ADD_ADMIN_EXCEPTION.getCode(), e);
         }

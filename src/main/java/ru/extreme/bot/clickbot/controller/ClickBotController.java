@@ -42,14 +42,12 @@ import static ru.extreme.bot.clickbot.utils.MessageUtils.createMessageMarkupClic
 @Component
 public class ClickBotController extends TelegramLongPollingBot {
     private static final String TIME_ZONE = "Europe/Moscow";
-    private static final String TIME_JOB = "0 30 16 * * *";
+    private static final String TIME_JOB = "0 3 11 * * *";
     private final Map<String, String> chainBindingActions = new ConcurrentHashMap<>();
     private final SingleActionStrategy singleActionStrategy;
     private final ChainActionStrategy chainActionStrategy;
     private final UpdateDataActionSupport updateDataActionSupport;
-
     private final UpdateAllProfilesJob updateAllProfilesJob;
-
     private final ClickProfileService clickProfileService;
 
     @Autowired
@@ -92,12 +90,12 @@ public class ClickBotController extends TelegramLongPollingBot {
             boolean containsChainKey = chainBindingActions.containsKey(chatId);
             if (containsChainKey) {
                 try {
-                    BotApiMethod msg = chainActionStrategy.getStrategy(ChainActionCode.getByCode(chainBindingActions.get(chatId)))
+                    List<BotApiMethod> msg = chainActionStrategy.getStrategy(ChainActionCode.getByCode(chainBindingActions.get(chatId)))
                             .callback(update);
 
                     chainBindingActions.remove(chatId);
 
-                    sendMessage(msg);
+                    sendMessages(msg);
                 } catch (Exception e) {
                     sendMessage(getExceptionMsg(chatId, e.getMessage()));
                 }
@@ -105,15 +103,15 @@ public class ClickBotController extends TelegramLongPollingBot {
                 switch (messageText) {
                     case "/start" -> {
                         SingleAction action = singleActionStrategy.getStrategy(START_ACTION);
-                        sendMessage(action.handle(update));
+                        sendMessages(action.handle(update));
                     }
                     case "/menu" -> {
                         SingleAction action = singleActionStrategy.getStrategy(MENU_ACTION);
-                        sendMessage(action.handle(update));
+                        sendMessages(action.handle(update));
                     }
                     case "/help" -> {
                         SingleAction action = singleActionStrategy.getStrategy(HELP_ACTION);
-                        sendMessage(action.handle(update));
+                        sendMessages(action.handle(update));
                     }
 
                     default -> defaultCommand(message);
@@ -162,10 +160,10 @@ public class ClickBotController extends TelegramLongPollingBot {
         }
 
         SingleAction singleAction = singleActionStrategy.getStrategy(singleActionKey);
-        sendMessage(singleAction.handle(update));
+        sendMessages(singleAction.handle(update));
 
         if (singleActionKey.equals(UPDATE_DATA_ACTION)) {
-            updateDataAndNotify(chatId, update);
+            updateDataAndNotify(chatId);
         }
     }
 
@@ -185,7 +183,7 @@ public class ClickBotController extends TelegramLongPollingBot {
                     .callback(update);
             chainBindingActions.remove(chatId);
 
-            sendMessage(msg);
+            sendMessages(msg);
         }
     }
 
@@ -197,19 +195,17 @@ public class ClickBotController extends TelegramLongPollingBot {
                 .callback(update);
         chainBindingActions.remove(chatId);
 
-        sendMessage(msg);
+        sendMessages(msg);
     }
 
-    private void updateDataAndNotify(String chatId, Update update) throws ServiceException {
-        Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
-
+    private void updateDataAndNotify(String chatId) throws ServiceException {
         updateDataActionSupport.updateAllProfilesData();
 
         Map<ClickProfile, List<ProfileAccount>> profileAccountsMap = clickProfileService.getProfileAccountsMap();
 
-        sendMessage(createMessageMarkupClickProfilesInfo(Long.valueOf(chatId),
+        sendMessages(createMessageMarkupClickProfilesInfo(Long.valueOf(chatId),
                 "Обновление данных завершено",
-                messageId, profileAccountsMap, MarkupCreator.createMarkupActions(Collections.singletonList(MENU_ACTION))));
+                profileAccountsMap, MarkupCreator.createMarkupActions(Collections.singletonList(MENU_ACTION))));
 
     }
 
@@ -224,11 +220,8 @@ public class ClickBotController extends TelegramLongPollingBot {
 
     @Scheduled(cron = TIME_JOB, zone = TIME_ZONE)
     private void updateAllDateByTime() throws ServiceException, InterruptedException {
-        List<SendMessage> sendMessages = updateAllProfilesJob.updatedProfilesWithBalanceLess5000();
-
-        for (SendMessage sendMessage : sendMessages) {
-            sendMessage(sendMessage);
-        }
+        List<BotApiMethod> sendMessages = updateAllProfilesJob.updatedProfilesWithBalanceLess5000();
+        sendMessages(sendMessages);
     }
 
     private BotApiMethod getExceptionMsg(String chatId, String msg) {
@@ -242,6 +235,16 @@ public class ClickBotController extends TelegramLongPollingBot {
     private void sendMessage(BotApiMethod message) {
         try {
             execute(message);
+        } catch (TelegramApiException e) {
+            log.info(e.getMessage());
+        }
+    }
+
+    private void sendMessages(List<BotApiMethod> messages) {
+        try {
+            for (BotApiMethod message : messages) {
+                execute(message);
+            }
         } catch (TelegramApiException e) {
             log.info(e.getMessage());
         }

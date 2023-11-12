@@ -4,6 +4,8 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.extreme.bot.clickbot.exception.ServiceException;
 
+import java.util.List;
+
 /**
  * Интерфейс для обработки цепных команд
  */
@@ -12,5 +14,5 @@ public interface ChainAction {
 
     BotApiMethod handle(Update update);
 
-    BotApiMethod callback(Update update) throws Exception;
+    List<BotApiMethod> callback(Update update) throws Exception;
 }

@@ -51,7 +51,7 @@ public class DeleteProfileAction implements ChainAction {
     }
 
     @Override
-    public BotApiMethod callback(Update update) throws ServiceException {
+    public List<BotApiMethod> callback(Update update) throws ServiceException {
         try {
             MessageInfo info = new MessageInfo(update);
 
@@ -62,10 +62,10 @@ public class DeleteProfileAction implements ChainAction {
             Long profileId = Long.valueOf(info.getData());
             String profileName = clickProfileService.deleteProfileById(profileId);
 
-            return createEditMessageMarkup(info.getChatId(),
+            return Collections.singletonList(createEditMessageMarkup(info.getChatId(),
                     String.format("Профиль %s удален", profileName),
                     info.getMessageId(),
-                    MarkupCreator.createMarkupActions(ACTION_LIST));
+                    MarkupCreator.createMarkupActions(ACTION_LIST)));
         } catch (Exception e) {
             throw new ServiceException(DELETE_ACCOUNT_EXCEPTION.getCode(), e);
         }

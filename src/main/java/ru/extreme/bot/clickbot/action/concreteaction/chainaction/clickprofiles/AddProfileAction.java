@@ -50,7 +50,7 @@ public class AddProfileAction implements ChainAction {
     }
 
     @Override
-    public BotApiMethod callback(Update update) throws Exception {
+    public List<BotApiMethod> callback(Update update) throws Exception {
         try {
             MessageInfo info = new MessageInfo(update);
 
@@ -64,9 +64,9 @@ public class AddProfileAction implements ChainAction {
             String alert = isOldProfile ? "Профиль %s обновлён" : "Профиль %s добавлен";
             ClickProfile newProfile = clickProfileService.addNewProfile(token);
 
-            return createSendMessageMarkup(info.getChatId(),
+            return Collections.singletonList(createSendMessageMarkup(info.getChatId(),
                     String.format(alert, newProfile.getDescription()),
-                    MarkupCreator.createMarkupActions(ACTION_LIST));
+                    MarkupCreator.createMarkupActions(ACTION_LIST)));
         } catch (Exception e) {
             throw new ServiceException(ADD_ACCOUNT_EXCEPTION.getCode(), e);
         }

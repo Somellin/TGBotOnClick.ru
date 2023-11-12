@@ -22,6 +22,7 @@ public class MessageInfo {
             this.message = update.getMessage();
             this.chatId = message.getChatId();
             this.data = message.getText();
+            this.messageId = message.getMessageId();
             this.isCallBack = false;
         } else if (update.hasCallbackQuery()) {
             this.callbackQuery = update.getCallbackQuery();
